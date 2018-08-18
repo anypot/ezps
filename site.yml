@@ -1,0 +1,9 @@
+---
+# This is the top-level Ansible playbook that defines the entire infrastructure.
+
+- hosts: all
+  become: yes
+
+  roles:
+    - common
+

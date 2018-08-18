@@ -1,0 +1,27 @@
+---
+
+- name: Upgrade the atomic host platform to the latest version (atomic host upgrade)
+  atomic_host:
+    revision: latest
+  tags: packages
+
+- name: Reboot the system
+  command: /sbin/shutdown -r +1
+  async: 0
+  poll: 0
+  ignore_errors: true
+  tags: packages
+
+- name: Set timezone
+  timezone:
+    name: "{{ common_timezone }}"
+
+- name: Set up static entries in /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item]['ansible_' + vars['private_iface']]['ipv4']['address'] }} {{ item }}"
+    state: present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: "{{ groups.all }}"
+
+# -name: Allow trafic between nodes in iptables

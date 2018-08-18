@@ -1,0 +1,6 @@
+[ezps]
+# Hosts in this `ezps` group use vars defined in `group_vars/ezps`
+# Put your hosts IP addresses or hostnames below
+ezpsnode1
+ezpsnode2
+ezpsnode3

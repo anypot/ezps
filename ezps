@@ -1,0 +1,24 @@
+#!/bin/bash
+VERSION=0.1
+
+usage ()
+{
+	echo "Usage: $(basename $0) {install|upgrade|help|version}"
+	echo ""
+}
+
+[[ $# -eq 0 ]] && usage
+
+while [[ $# > 0 ]]
+do
+	opt="$1"
+
+	case $opt in
+		install) ansible-playbook -i ./hosts site.yml --skip-tags "packages" ;;
+		upgrade) ansible-playbook -i ./hosts site.yml --tags "packages" ;;
+		help) usage ;;
+		version) echo EZ Personal Server version $VERSION ;;
+		*) usage ;;
+	esac
+	shift
+done
