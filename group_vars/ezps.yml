@@ -4,12 +4,12 @@
 ########################################
 
 # SSH user
-ansible_user: vagrant
-ansible_ssh_pass: vagrant
+#ansible_user: vagrant
+#ansible_ssh_pass: vagrant
 
 # Network
-private_iface: enp0s8
-public_iface: enp0s3
+#private_iface: enp0s8
+#public_iface: enp0s3
 
 # Timezone
 common_timezone: "Europe/Paris"
