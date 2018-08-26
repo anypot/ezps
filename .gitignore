@@ -1,2 +1,4 @@
+.vagrant
+vagrant_vars.yml
 *.retry
 

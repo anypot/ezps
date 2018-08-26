@@ -4,7 +4,7 @@
 require 'yaml'
 VAGRANT_API_VERSION = '2'
 
-config_file = File.extend_path(File.join(File.dirname(__FILE__), 'vagrant_variables.yml'))
+config_file = File.expand_path(File.join(File.dirname(__FILE__), 'vagrant_vars.yml'))
 settings = YAML.load_file(config_file)
 
 HOSTNAME_PREFIX		= settings['hostname_prefix'] ? settings['hostname_prefix'] + '-' : ""
@@ -22,6 +22,7 @@ ASSIGN_STATIC_IP = !(BOX == 'openstack' or BOX == 'anothercloudprovider')
 
 ansible_provision = proc do |ansible|
   ansible.playbook = 'site.yml'
+  ansible.limit = 'all'
 
   ansible.extra_vars = {
     public_network: "#{PUBLIC_SUBNET}.0/24",
@@ -67,7 +68,7 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--memory", "#{MEMORY}"]
         vb.customize ["modifyvm", :id, "--name", "#{HOSTNAME_PREFIX}node#{i}"]
       end
-      # node.vm.provision 'ansible', &ansible_provision if i == 3
+      node.vm.provision "ansible", &ansible_provision if i == 3
     end
   end
 end
