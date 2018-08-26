@@ -1,0 +1,16 @@
+---
+
+- name: Set SELinux context on /var/lib/ceph files
+  file:
+    path: /var/lib/ceph
+    setype: svirt_sandbox_file_t
+    recurse: yes
+    state: directory
+
+- name: Set SELinux context on /etc/ceph files
+  file:
+    path: /etc/ceph
+    setype: svirt_sandbox_file_t
+    recurse: yes
+    state: directory
+
