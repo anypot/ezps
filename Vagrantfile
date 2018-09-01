@@ -39,7 +39,7 @@ ansible_provision = proc do |ansible|
   end
 
   if DEBUG then
-    ansible.verbose = '-vvvv'
+    ansible.verbose = '-vvvvv'
   end
 end
 
