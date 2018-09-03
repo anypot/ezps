@@ -1,0 +1,19 @@
+---
+
+- name: Deploy MDSs
+  docker_container:
+    name: ceph-mds
+    image: ceph/daemon
+    command: mds
+    state: started
+    detach: yes
+    network_mode: host
+    restart_policy: always
+    volumes:
+    - "/etc/ceph:/etc/ceph"
+    - "/var/lib/ceph/:/var/lib/ceph/"
+    env:
+      CEPHFS_CREATE: 1
+      CEPHFS_DATA_POOL_PG: 64
+      CEPHFS_METADATA_POOL_PG: 64
+

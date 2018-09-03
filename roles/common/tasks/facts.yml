@@ -1,0 +1,26 @@
+---
+
+- name: Check if it is atomic host
+  stat:
+    path: /run/ostree-booted
+  register: stat_ostree
+
+- name: set_fact is_atomic
+  set_fact:
+    is_atomic: "{{ stat_ostree.stat.exists }}"
+
+- debug:
+    msg: is_atomic = {{ is_atomic }}
+
+- name: Get docker version
+  command: docker --version
+  changed_when: false
+  check_mode: no
+  register: docker_version
+
+- name: set_fact docker_version
+  set_fact:
+    docker_version: "{{ docker_version.stdout.split(' ')[2] }}"
+
+- debug:
+    msg: docker_version = {{ docker_version }}

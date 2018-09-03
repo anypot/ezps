@@ -1,8 +1,12 @@
 ---
 
+- name: Include facts.yml
+  include: facts.yml
+
 - name: Upgrade the atomic host platform to the latest version (atomic host upgrade)
   atomic_host:
     revision: latest
+  when: is_atomic
   tags: packages
 
 - name: Reboot the system
@@ -11,6 +15,10 @@
   poll: 0
   ignore_errors: true
   tags: packages
+
+- name: Include ntp_atomic.yml
+  include: ntp_atomic.yml
+  when: is_atomic
 
 - name: Set timezone
   timezone:

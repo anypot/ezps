@@ -6,7 +6,8 @@ vagrant_box: centos/atomic-host
 public_subnet: 192.168.0
 private_iface: enp0s8
 memory: 1024
-disks: "['/dev/vdd']"
+disk: /dev/sdb
+disk_size: 3
 # ssh_username: vagrant
 # ssh_private_key_path: "~/.ssh/id_rsa"
 vagrant_sync_dir: /home/vagrant/sync

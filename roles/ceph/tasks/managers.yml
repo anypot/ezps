@@ -1,0 +1,17 @@
+---
+
+- name: Deploy managers
+  docker_container:
+    name: ceph-mgr
+    image: ceph/daemon
+    command: mgr
+    state: started
+    detach: yes
+    network_mode: host
+    restart_policy: always
+    privileged: true
+    pid_mode: host
+    volumes:
+    - "/etc/ceph:/etc/ceph"
+    - "/var/lib/ceph/:/var/lib/ceph/"
+

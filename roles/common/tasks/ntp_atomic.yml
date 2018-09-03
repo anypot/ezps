@@ -1,0 +1,19 @@
+---
+
+- name: Check ntp installation on atomic
+  command: rpm -q chrony
+  args:
+    warn: no
+  register: ntp_pkg_query
+  ignore_errors: true
+  check_mode: no
+  changed_when: false
+  when: is_atomic
+
+- name: Start the ntp service
+  service:
+    name: chronyd
+    enabled: yes
+    state: started
+  when: ntp_pkg_query.rc == 0
+

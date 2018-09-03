@@ -1,0 +1,48 @@
+---
+
+- name: Get ceph version
+  command: docker run --rm --entrypoint /usr/bin/ceph ceph/daemon --version
+  changed_when: false
+  check_mode: no
+  register: ceph_version
+
+- name: set_fact ceph_version
+  set_fact:
+    ceph_version: "{{ ceph_version.stdout.split(' ')[2] }}"
+
+- debug:
+    msg: ceph_version = {{ ceph_version }}
+
+- name: Check for a mon container
+  command: "docker ps -q --filter='name=ceph-mon'"
+  register: ceph_mon_container_stat
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Check for a mgr container
+  command: "docker ps -q --filter='name=ceph-mgr'"
+  register: ceph_mgr_container_stat
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Check for a osd container
+  command: "docker ps -q --filter='name=ceph-osd'"
+  register: ceph_osd_container_stat
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Check for a mds container
+  command: "docker ps -q --filter='name=ceph-mds'"
+  register: ceph_mon_container_stat
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: set_fact ceph_docker_exec_cmd
+  set_fact:
+    ceph_docker_exec_cmd: "docker exec ceph-mon"
+  delegate_to: "{{ ansible_play_hosts | first }}"
+

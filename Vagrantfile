@@ -27,7 +27,7 @@ ansible_provision = proc do |ansible|
   ansible.extra_vars = {
     public_network: "#{PUBLIC_SUBNET}.0/24",
     private_iface: settings['private_iface'],
-    disks: settings['disks']
+    disk: settings['disk']
   }
 
   ansible.groups = {
@@ -67,6 +67,18 @@ Vagrant.configure(VAGRANT_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         vb.customize ["modifyvm", :id, "--memory", "#{MEMORY}"]
         vb.customize ["modifyvm", :id, "--name", "#{HOSTNAME_PREFIX}node#{i}"]
+
+	unless File.exist?("data_disk_#{HOSTNAME_PREFIX}node#{i}.vdi")
+          vb.customize ['createhd', \
+			'--filename', "data_disk_#{HOSTNAME_PREFIX}node#{i}", \
+			'--variant', "Fixed", \
+			'--size', settings['disk_size'] * 1024]
+	end
+
+        vb.customize ['storageattach', :id, \
+		      '--storagectl', 'IDE', \
+		      '--port', 1, '--device', 0, '--type', 'hdd', \
+		      '--medium', "data_disk_#{HOSTNAME_PREFIX}node#{i}.vdi"]
       end
       node.vm.provision "ansible", &ansible_provision if i == 3
     end

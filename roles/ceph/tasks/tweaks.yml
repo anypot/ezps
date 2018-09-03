@@ -1,0 +1,18 @@
+---
+
+- name: Set cephfs_data size to 2
+  command: "{{ ceph_docker_exec_cmd }} ceph osd pool set cephfs_data size 2"
+  run_once: true
+
+- name: Set cephfs_metadata size to 2
+  command: "{{ ceph_docker_exec_cmd }} ceph osd pool set cephfs_metadata size 2"
+  run_once: true
+
+- name: Set noscrub OSD flag
+  command: "{{ ceph_docker_exec_cmd }} ceph osd set noscrub"
+  run_once: true
+
+- name: Set nodeep-scrub OSD flag
+  command: "{{ ceph_docker_exec_cmd }} ceph osd set nodeep-scrub"
+  run_once: true
+

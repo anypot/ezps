@@ -1,0 +1,22 @@
+---
+
+- name: Create credentials for swarm
+  shell: "{{ ceph_docker_exec_cmd }} ceph auth get-or-create client.dockerswarm osd 'allow rw' mon 'allow r' mds 'allow' > /etc/ceph/keyring.dockerswarm"
+  run_once: true
+
+- name: Get the user secret
+  command: ceph-authtool /etc/ceph/keyring.dockerswarm -p -n client.dockerswarm
+  register: ceph_swarm_secret
+  changed_when: false
+  run_once: true
+
+- name: Mount MDS volume
+  mount:
+    src: "{{ hostvars[inventory_hostname]['ansible_' + vars['private_iface']]['ipv4']['address'] }}:6789:/"
+    path: /var/data
+    fstype: ceph
+    opts: name=dockerswarm,secret={{ ceph_swarm_secret.stdout_lines[0] }},noatime,_netdev,context=system_u:object_r:svirt_sandbox_file_t:s0
+    dump: 0
+    passno: 2
+    state: mounted
+

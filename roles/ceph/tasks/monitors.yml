@@ -1,0 +1,51 @@
+---
+
+- name: Deploy monitor 1
+  docker_container:
+    name: ceph-mon
+    image: ceph/daemon
+    command: mon
+    state: started
+    detach: yes
+    network_mode: host
+    restart_policy: always
+    volumes:
+    - "/etc/ceph:/etc/ceph"
+    - "/var/lib/ceph/:/var/lib/ceph/"
+    env:
+      MON_IP: "{{ hostvars[inventory_hostname]['ansible_' + vars['private_iface']]['ipv4']['address'] }}"
+      CEPH_PUBLIC_NETWORK: "{{ public_network }}"
+  run_once: true
+
+- name: Slurp configration files in monitor 1
+  slurp: src={{ item }}
+  with_items:
+    - /etc/ceph/ceph.client.admin.keyring
+    - /etc/ceph/ceph.conf
+    - /etc/ceph/ceph.mon.keyring
+  register: mon_config_files
+  run_once: true
+
+- name: Write out configration files
+  copy:
+    dest: "{{ item.item }}"
+    content: "{{ item.content | b64decode }}"
+    mode: 0600
+  with_items: "{{ mon_config_files.results }}"
+
+- name: Deploy monitors 2 & 3
+  docker_container:
+    name: ceph-mon
+    image: ceph/daemon
+    command: mon
+    state: started
+    detach: yes
+    network_mode: host
+    restart_policy: always
+    volumes:
+    - "/etc/ceph:/etc/ceph"
+    - "/var/lib/ceph/:/var/lib/ceph/"
+    env:
+      MON_IP: "{{ hostvars[inventory_hostname]['ansible_' + vars['private_iface']]['ipv4']['address'] }}"
+      CEPH_PUBLIC_NETWORK: "{{ public_network }}"
+

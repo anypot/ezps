@@ -1,0 +1,25 @@
+---
+
+- name: Dump auth credentials for the OSD into the appropriate location
+  command: "{{ ceph_docker_exec_cmd }} ceph auth get client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring"
+
+- name: Deploy OSD disks
+  docker_container:
+    name: ceph-osd
+    image: ceph/daemon
+    command: osd_ceph_disk
+    state: started
+    detach: yes
+    network_mode: host
+    restart_policy: always
+    privileged: true
+    pid_mode: host
+    volumes:
+    - "/etc/ceph:/etc/ceph"
+    - "/var/lib/ceph/:/var/lib/ceph/"
+    - "/dev/:/dev/"
+    env:
+      OSD_DEVICE: "{{ disk }}"
+      OSD_TYPE: disk
+      OSD_FORCE_ZAP: 1
+
